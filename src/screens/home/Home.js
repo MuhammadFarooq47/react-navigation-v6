@@ -3,8 +3,11 @@ import React from 'react';
 import {COLORS} from '../../constants';
 import Icon from "react-native-vector-icons/Ionicons";
 // import Navigation from "react-navig"
+import { useSelector } from 'react-redux';
 
 const Home = ({navigation}) => {
+  const {user} = useSelector((state) => state.auth);
+  console.log("🚀 ~ Home ~ abc:", user)
   return (
     <>
     <StatusBar  animated={true}

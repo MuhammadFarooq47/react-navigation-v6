@@ -1,19 +1,56 @@
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   View,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../assets/icons/LOGO.svg';
 import { COLORS, ROUTES } from '../../constants';
+import { loginUser } from '../../redux/slices/authSlice';
+import { Toast } from 'toastify-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: ""
+  })
+
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+
+  const onChange = (text, field) => {
+    setCredentials((prevCredentials) => ({
+      ...prevCredentials,
+      [field]: text,
+    }));
+  };
+  
+
+  const onSubmit = () => {
+    console.log("Hello")
+    // try {
+    //   console.log("World")
+    //   dispatch(loginUser(credentials));
+    // } catch (error) {
+    //   console.log("error from login")
+    // }
+    AsyncStorage.clear()
+    if (credentials?.email && credentials?.password !== "") {
+      dispatch(loginUser(credentials));
+      // navigation.navigate(ROUTES.HOME);
+      Toast.success("Login Successfull...")
+    }else{
+      Toast.error("Email password required!")
+    }
+
+  }
 
   return (
     <SafeAreaView style={styles.main}>
@@ -25,8 +62,21 @@ const Login = () => {
           </View>
 
           <Text style={styles.loginContinueTxt}>Login in to continue</Text>
-          <TextInput style={styles.input} placeholder="Email" />
-          <TextInput style={styles.input} placeholder="Password" />
+          <TextInput  
+  placeholder="Email"
+  value={credentials?.email}
+  onChangeText={(text) => onChange(text, 'email')}
+  style={styles.input}  
+/>
+<TextInput  
+  placeholder="Password"  
+  value={credentials?.password}
+  secureTextEntry
+  onChangeText={(text) => onChange(text, 'password')}
+  style={styles.input}  
+/>
+
+
 
           <View style={styles.loginBtnWrapper}>
             <LinearGradient
@@ -35,29 +85,29 @@ const Login = () => {
               start={{ y: 0.0, x: 0.0 }}
               end={{ y: 1.0, x: 0.0 }}>
               {/******************** LOGIN BUTTON *********************/}
-              <TouchableOpacity
-                onPress={() => navigation.navigate(ROUTES.HOME)}
+              <Pressable
+                onPress={() => console.log("hello")}
                 activeOpacity={0.7}
                 style={styles.loginBtn}>
                 <Text style={styles.loginText}>Log In</Text>
-              </TouchableOpacity>
+              </Pressable>
             </LinearGradient>
           </View>
 
           {/***************** FORGOT PASSWORD BUTTON *****************/}
-          <TouchableOpacity
-            onPress={() => navigation.navigate(ROUTES.FORGOT_PASSWORD)}>
+          <Pressable
+              onPress={onSubmit}>
             <Text style={styles.forgotPassText}>Forgot Password?</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <View style={styles.footer}>
           <Text style={styles.footerText}> Don't have an account? </Text>
           {/******************** REGISTER BUTTON *********************/}
-          <TouchableOpacity
+          <Pressable
             onPress={() => navigation.navigate(ROUTES.REGISTER)}>
             <Text style={styles.signupBtn}>Sign Up</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
